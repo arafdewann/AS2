@@ -1,4 +1,5 @@
-# CMS Web Blog by MD ARAFAT KOYES
+# CMS Web Blog by MD ARAFAT KOYES Assignment 2 WEB322
+makoyes
 
 
 This is a simple Content Management System (CMS) web application built with **Node.js**, **Express**, and **Bootstrap 5**. It features basic routes for handling articles and categories and serves static files like HTML, CSS, and images.
