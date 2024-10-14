@@ -1,36 +1,24 @@
-const axios = require('axios');
-
-let articles = [];
-let categories = [];
+const articles = require('./data/articles.json');
+const categories = require('./data/categories.json');
 
 module.exports = {
   initialize: function () {
     return new Promise((resolve, reject) => {
-      axios
-        .get('http://localhost:3243/data/articles.json') // Adjust the URL path based on deployment
-        .then((response) => {
-          articles = response.data;
-
-          return axios.get('http://localhost:3243/data/categories.json');
-        })
-        .then((response) => {
-          categories = response.data;
-          resolve();
-        })
-        .catch((err) => {
-          reject('unable to read file');
-        });
+      // Since articles and categories are now loaded via require, we don't need fs.readFile
+      if (articles && categories) {
+        resolve();
+      } else {
+        reject('Unable to load data');
+      }
     });
   },
   getPublishedArticles: function () {
     return new Promise((resolve, reject) => {
-      const publishedArticles = articles.filter(
-        (article) => article.published === true
-      );
+      const publishedArticles = articles.filter((article) => article.published === true);
       if (publishedArticles.length > 0) {
         resolve(publishedArticles);
       } else {
-        reject('no results returned');
+        reject('No results returned');
       }
     });
   },
@@ -39,7 +27,7 @@ module.exports = {
       if (categories.length > 0) {
         resolve(categories);
       } else {
-        reject('no results returned');
+        reject('No results returned');
       }
     });
   },
