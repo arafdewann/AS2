@@ -1,16 +1,9 @@
-const articles = require('./data/articles.json');
+cconst articles = require('./data/articles.json');
 const categories = require('./data/categories.json');
 
 module.exports = {
   initialize: function () {
-    return new Promise((resolve, reject) => {
-      // Since articles and categories are now loaded via require, we don't need fs.readFile
-      if (articles && categories) {
-        resolve();
-      } else {
-        reject('Unable to load data');
-      }
-    });
+    return Promise.resolve();
   },
   getPublishedArticles: function () {
     return new Promise((resolve, reject) => {
@@ -30,5 +23,5 @@ module.exports = {
         reject('No results returned');
       }
     });
-  },
+  }
 };
