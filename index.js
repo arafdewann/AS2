@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const port = 3243;
+const port = process.env.PORT || 3243;
 const contentService = require("./content-service");
 
 app.use(express.static("public"));
@@ -15,6 +15,10 @@ contentService
       res.redirect("/home");
     });
 
+    // Serve 'home.html' from the 'views' folder (optional)
+    app.get("/home", (req, res) => {
+      res.sendFile(__dirname + "/views/home.html");
+    });
 
     // Serve 'about.html' from the 'views' folder
     app.get("/about", (req, res) => {
@@ -28,7 +32,7 @@ contentService
           res.json(articles);
         })
         .catch((err) => {
-          res.json({ message: err });
+          res.status(500).json({ message: err });
         });
     });
 
@@ -39,8 +43,13 @@ contentService
           res.json(categories);
         })
         .catch((err) => {
-          res.json({ message: err });
+          res.status(500).json({ message: err });
         });
+    });
+
+    // 404 handling
+    app.use((req, res) => {
+      res.status(404).send("Page not found");
     });
 
     app.listen(port, () => {
