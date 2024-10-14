@@ -1,9 +1,11 @@
 const express = require("express");
+const path = require("path");
 const app = express();
 const port = process.env.PORT || 3243;
 const contentService = require("./content-service");
 
-app.use(express.static("public"));
+// Serve static files like CSS from the public folder
+app.use(express.static(path.join(__dirname, "public")));
 
 // Initialize content service
 contentService
@@ -11,20 +13,17 @@ contentService
   .then(() => {
     console.log("Content service initialized");
 
+    // Redirect root URL to "/about"
     app.get("/", (req, res) => {
-      res.redirect("/home");
-    });
-
-    // Serve 'home.html' from the 'views' folder (optional)
-    app.get("/home", (req, res) => {
-      res.sendFile(__dirname + "/views/home.html");
+      res.redirect("/about");
     });
 
     // Serve 'about.html' from the 'views' folder
     app.get("/about", (req, res) => {
-      res.sendFile(__dirname + "/views/about.html");
+      res.sendFile(path.join(__dirname, "views", "about.html"));
     });
 
+    // Serve published articles
     app.get("/articles", (req, res) => {
       contentService
         .getPublishedArticles()
@@ -36,6 +35,7 @@ contentService
         });
     });
 
+    // Serve categories
     app.get("/categories", (req, res) => {
       contentService
         .getCategories()
@@ -47,15 +47,11 @@ contentService
         });
     });
 
-    // 404 handling
-    app.use((req, res) => {
-      res.status(404).send("Page not found");
-    });
-
+    // Start the server
     app.listen(port, () => {
       console.log(`Express http server listening on port ${port}`);
     });
   })
   .catch((err) => {
-    console.log(err);
+    console.log("Error initializing content service:", err);
   });
