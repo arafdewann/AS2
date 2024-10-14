@@ -1,4 +1,4 @@
-const fs = require("fs");
+const axios = require('axios');
 
 let articles = [];
 let categories = [];
@@ -6,22 +6,20 @@ let categories = [];
 module.exports = {
   initialize: function () {
     return new Promise((resolve, reject) => {
-      fs.readFile("./data/articles.json", "utf8", (err, data) => {
-        if (err) {
-          reject("unable to read file");
-        } else {
-          articles = JSON.parse(data);
+      axios
+        .get('http://localhost:3243/data/articles.json') // Adjust the URL path based on deployment
+        .then((response) => {
+          articles = response.data;
 
-          fs.readFile("./data/categories.json", "utf8", (err, data) => {
-            if (err) {
-              reject("unable to read file");
-            } else {
-              categories = JSON.parse(data);
-              resolve();
-            }
-          });
-        }
-      });
+          return axios.get('http://localhost:3243/data/categories.json');
+        })
+        .then((response) => {
+          categories = response.data;
+          resolve();
+        })
+        .catch((err) => {
+          reject('unable to read file');
+        });
     });
   },
   getPublishedArticles: function () {
@@ -32,7 +30,7 @@ module.exports = {
       if (publishedArticles.length > 0) {
         resolve(publishedArticles);
       } else {
-        reject("no results returned");
+        reject('no results returned');
       }
     });
   },
@@ -41,7 +39,7 @@ module.exports = {
       if (categories.length > 0) {
         resolve(categories);
       } else {
-        reject("no results returned");
+        reject('no results returned');
       }
     });
   },
